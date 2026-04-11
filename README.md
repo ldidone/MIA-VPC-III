@@ -17,6 +17,8 @@ git clone https://github.com/ldidone/MIA-VPC-III.git
 cd MIA-VPC-III
 ```
 
+Install dependencies (including the local package in editable mode) with `pip install -r requirements.txt` from the repository root. When you open the notebooks under `notebooks/`, keep the Jupyter kernel’s working directory at the **project root** so paths like `models/...` resolve correctly.
+
 ## Project Organization
 
 ```
