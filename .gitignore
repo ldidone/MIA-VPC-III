@@ -213,11 +213,11 @@ cython_debug/
 *.pt
 *.pth
 *.onnx
-*.pb
-*.tflite
+#*.pb
+#*.tflite
 *.mlmodel
 *.safetensors
-*.npy
+*.npys
 *.npz
 checkpoints/
 runs/
