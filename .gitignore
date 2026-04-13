@@ -230,3 +230,5 @@ tensorboard_logs/
 *.tmp
 *.temp
 .cache/
+
+.agents
