@@ -63,12 +63,24 @@ Streamlit prints a local URL (typically `http://localhost:8501`). Use the browse
 ├── Makefile           <- Makefile with convenience commands like `make data` or `make train`
 ├── README.md          <- The top-level README for developers using this project.
 ├── data
+│   ├── demo           <- Sample flower images for the local Streamlit app (`save_demo_images`)
 │   ├── external       <- Data from third party sources.
 │   ├── interim        <- Intermediate data that has been transformed.
 │   ├── processed      <- The final, canonical data sets for modeling.
 │   └── raw            <- The original, immutable data dump.
 │
 ├── docs               <- Project documentation assets (optional; mkdocs not configured by default)
+│
+├── hf_space           <- Hugging Face Space (Docker): Streamlit app, bundled model, demo JPGs
+│   ├── Dockerfile
+│   ├── README.md      <- Space card metadata (YAML) and short description
+│   ├── app.py         <- Streamlit UI for the Hub deployment
+│   ├── requirements.txt
+│   ├── .gitattributes <- Optional Git LFS patterns (Hub-style)
+│   ├── .streamlit
+│   │   └── config.toml <- Server options (e.g. XSRF disabled for Space file uploads)
+│   ├── demo           <- Sample images shipped with the Space
+│   └── model          <- `config.json`, `preprocessor_config.json`, `model.safetensors`
 │
 ├── models             <- Trained and serialized models, model predictions, or model summaries
 │
@@ -90,6 +102,10 @@ Streamlit prints a local URL (typically `http://localhost:8501`). Use the browse
 └── mia_vpc_iii        <- Source code for use in this project.
     │
     ├── __init__.py             <- Makes mia_vpc_iii a Python module
+    │
+    ├── app.py                  <- Local Streamlit flower classifier
+    │
+    ├── save_demo_images.py     <- Fills `data/demo/` from the tf_flowers image bundle
     │
     ├── config.py               <- Store useful variables and configuration
     │
