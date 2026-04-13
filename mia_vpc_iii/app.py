@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import streamlit as st
 import torch
@@ -24,7 +25,10 @@ def load_model():
 
 def run_classify(image: Image.Image, processor, model) -> tuple[str, float, dict[str, float]]:
     image = image.convert("RGB")
-    inputs = processor(images=image, return_tensors="pt")
+    encoded = processor(images=[image], return_tensors=None)
+    pixel_values = np.stack(encoded["pixel_values"], axis=0)
+    arr = np.ascontiguousarray(pixel_values.astype(np.float32))
+    inputs = {"pixel_values": torch.tensor(arr, dtype=torch.float32)}
     with torch.no_grad():
         logits = model(**inputs).logits
     probs = torch.nn.functional.softmax(logits, dim=-1)[0]
@@ -45,14 +49,35 @@ def get_demo_images() -> list[Path]:
     return []
 
 
-def _on_upload_change():
-    st.session_state["source"] = "upload"
-    st.session_state["results"] = None
+def _show_image_and_results(
+    image: Image.Image,
+    processor,
+    model,
+    results_key: str,
+    classify_button_key: str,
+) -> None:
+    col_img, col_results = st.columns([1, 1])
 
+    with col_img:
+        st.image(image, caption="Input image", width="stretch")
 
-def _on_demo_change():
-    st.session_state["source"] = "demo"
-    st.session_state["results"] = None
+    with col_results:
+        if st.button("Classify", type="primary", key=classify_button_key):
+            with st.spinner("Classifying..."):
+                label, confidence, all_probs = run_classify(image, processor, model)
+            st.session_state[results_key] = (label, confidence, all_probs)
+
+        results = st.session_state[results_key]
+        if results is not None:
+            label, confidence, all_probs = results
+            st.metric("Predicted class", label.capitalize(), f"{confidence:.1%}")
+            st.markdown("**Class probabilities**")
+            sorted_probs = sorted(all_probs.items(), key=lambda x: x[1])
+            df = pd.DataFrame(
+                {"Probability": [v for _, v in sorted_probs]},
+                index=[k.capitalize() for k, _ in sorted_probs],
+            )
+            st.bar_chart(df, horizontal=True)
 
 
 def main():
@@ -85,7 +110,9 @@ def main():
         )
         if uploaded is not None:
             image = Image.open(uploaded)
-            _show_image_and_results(image, processor, model, "upload")
+            _show_image_and_results(
+                image, processor, model, "results_upload", "classify_upload"
+            )
 
     with tab_demo:
         demo_images = get_demo_images()
@@ -98,39 +125,14 @@ def main():
                 key="demo_select",
             )
             image = Image.open(selected)
-            _show_image_and_results(image, processor, model, "demo")
+            _show_image_and_results(
+                image, processor, model, "results_demo", "classify_demo"
+            )
         else:
             st.info(
                 "No demo images found. Run `python -m mia_vpc_iii.save_demo_images` "
                 "to download sample images into `data/demo/`."
             )
-
-
-def _show_image_and_results(image: Image.Image, processor, model, key_suffix: str):
-    results_key = f"results_{key_suffix}"
-
-    col_img, col_results = st.columns([1, 1])
-
-    with col_img:
-        st.image(image, caption="Input image", use_container_width=True)
-
-    with col_results:
-        if st.button("Classify", type="primary", key=f"classify_{key_suffix}"):
-            with st.spinner("Classifying..."):
-                label, confidence, all_probs = run_classify(image, processor, model)
-            st.session_state[results_key] = (label, confidence, all_probs)
-
-        results = st.session_state[results_key]
-        if results is not None:
-            label, confidence, all_probs = results
-            st.metric("Predicted class", label.capitalize(), f"{confidence:.1%}")
-            st.markdown("**Class probabilities**")
-            sorted_probs = sorted(all_probs.items(), key=lambda x: x[1])
-            df = pd.DataFrame(
-                {"Probability": [v for _, v in sorted_probs]},
-                index=[k.capitalize() for k, _ in sorted_probs],
-            )
-            st.bar_chart(df, horizontal=True)
 
 
 if __name__ == "__main__":

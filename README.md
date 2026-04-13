@@ -19,6 +19,44 @@ cd MIA-VPC-III
 
 Install dependencies (including the local package in editable mode) with `pip install -r requirements.txt` from the repository root. When you open the notebooks under `notebooks/`, keep the Jupyter kernel’s working directory at the **project root** so paths like `models/...` resolve correctly.
 
+## Flower classifier demo (Streamlit)
+
+### Hugging Face Space
+
+The same MobileViT flower classifier runs as a **Docker Space** on the Hugging Face Hub:
+
+**[https://huggingface.co/spaces/ldidone/flower-classifier-mobilevit](https://huggingface.co/spaces/ldidone/flower-classifier-mobilevit)**
+
+1. Open the Space and wait until the app shows **Running**.
+2. **Upload an image** — choose a JPG/PNG/JPEG, then click **Classify** to see the predicted class and probability bar chart.
+3. **Use a demo image** — pick a sample from the dropdown, then **Classify**.
+
+The Space bundles its own model and demo images under [`hf_space/`](hf_space/) in this repo (see that folder’s `Dockerfile`, `app.py`, and `README.md` for deployment details).
+
+### Run locally
+
+From the repository root, with a virtual environment activated (Python **3.10–3.12** is recommended for PyTorch wheels; **3.13** may not have a matching `torch` build on all platforms):
+
+```bash
+pip install -r requirements.txt
+```
+
+Optional: populate `data/demo/` with sample images from the tf_flowers archive (used by the local app’s demo tab):
+
+```bash
+python -m mia_vpc_iii.save_demo_images
+```
+
+Ensure the fine-tuned checkpoint exists at `models/mobilevit-small-tf-flowers-final-colab/` (including `model.safetensors`, `config.json`, and `preprocessor_config.json`).
+
+Start the Streamlit app:
+
+```bash
+streamlit run mia_vpc_iii/app.py
+```
+
+Streamlit prints a local URL (typically `http://localhost:8501`). Use the browser to upload images or try demo files from `data/demo/`.
+
 ## Project Organization
 
 ```
