@@ -107,18 +107,7 @@ Streamlit prints a local URL (typically `http://localhost:8501`). Use the browse
     │
     ├── save_demo_images.py     <- Fills `data/demo/` from the tf_flowers image bundle
     │
-    ├── config.py               <- Store useful variables and configuration
-    │
-    ├── dataset.py              <- Scripts to download or generate data
-    │
-    ├── features.py             <- Code to create features for modeling
-    │
-    ├── modeling                
-    │   ├── __init__.py 
-    │   ├── predict.py          <- Code to run model inference with trained models          
-    │   └── train.py            <- Code to train models
-    │
-    └── plots.py                <- Code to create visualizations
+    └── config.py               <- Store useful variables and configuration
 ```
 
 --------
