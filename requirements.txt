@@ -170,4 +170,5 @@ python-dotenv>=1.0.0
 loguru>=0.7.0
 pytest>=8.0
 ruff>=0.8.0
+streamlit>=1.40.0
 -e .
