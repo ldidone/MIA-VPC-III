@@ -217,6 +217,8 @@ cython_debug/
 #*.tflite
 *.mlmodel
 *.safetensors
+# Space bundle ships a small fine-tuned checkpoint with the app
+!hf_space/model/*.safetensors
 *.npys
 *.npz
 checkpoints/
@@ -230,3 +232,5 @@ tensorboard_logs/
 *.tmp
 *.temp
 .cache/
+
+.agents

@@ -1,0 +1,4 @@
+# Hugging Face Spaces serves Streamlit behind a proxy/iframe; XSRF checks break file uploads (403).
+[server]
+enableXsrfProtection = false
+maxUploadSize = 50
